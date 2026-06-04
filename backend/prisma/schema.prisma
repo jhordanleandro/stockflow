@@ -1,13 +1,48 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client"
-  output   = "../src/generated/prisma"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
+}
+
+model Supplier {
+  id            Int    @id @default(autoincrement())
+  companyName   String
+  cnpj          String @unique
+  address       String
+  phone         String
+  email         String
+  contactPerson String
+
+  products ProductSupplier[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Product {
+  id             Int       @id @default(autoincrement())
+  name           String
+  barcode        String?   @unique
+  description    String
+  quantity       Int       @default(0)
+  category       String
+  expirationDate DateTime?
+  imageUrl       String?
+
+  suppliers ProductSupplier[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ProductSupplier {
+  productId  Int
+  supplierId Int
+
+  product  Product  @relation(fields: [productId], references: [id])
+  supplier Supplier @relation(fields: [supplierId], references: [id])
+
+  @@id([productId, supplierId])
 }
