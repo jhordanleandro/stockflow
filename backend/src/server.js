@@ -19,3 +19,7 @@ const PORT = 3000;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
+
+const supplierRoutes = require('./routes/supplierRoutes');
+
+app.use('/suppliers', supplierRoutes);
