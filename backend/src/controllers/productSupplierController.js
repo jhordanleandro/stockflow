@@ -1,4 +1,5 @@
 const prisma = require("../config/prisma");
+const { sendServerError } = require("../utils/errors");
 
 const isValidId = (id) => Number.isInteger(Number(id)) && Number(id) > 0;
 
@@ -39,7 +40,7 @@ const createProductSupplier = async (req, res) => {
             });
         }
 
-        return res.status(500).json(error);
+        return sendServerError(res, error);
     }
 };
 
@@ -74,7 +75,7 @@ const deleteProductSupplier = async (req, res) => {
             });
         }
 
-        return res.status(500).json(error);
+        return sendServerError(res, error);
     }
 };
 
@@ -112,7 +113,7 @@ const getSuppliersByProduct = async (req, res) => {
         return res.json(suppliers);
 
     } catch (error) {
-        return res.status(500).json(error);
+        return sendServerError(res, error);
     }
 };
 
@@ -150,7 +151,7 @@ const getProductsBySupplier = async (req, res) => {
         return res.json(products);
 
     } catch (error) {
-        return res.status(500).json(error);
+        return sendServerError(res, error);
     }
 };
 

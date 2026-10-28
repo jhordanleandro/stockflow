@@ -1,4 +1,5 @@
 const prisma = require("../config/prisma");
+const { sendServerError } = require("../utils/errors");
 
 const createProduct = async (req, res) => {
     try {
@@ -36,7 +37,7 @@ const createProduct = async (req, res) => {
             });
         }
 
-        res.status(500).json(error);
+        sendServerError(res, error);
     }
 };
 
@@ -48,7 +49,7 @@ const getProducts = async (req, res) => {
         res.json(products);
 
     } catch (error) {
-        res.status(500).json(error);
+        sendServerError(res, error);
     }
 };
 
@@ -72,7 +73,7 @@ const getProductById = async (req, res) => {
         res.json(product);
 
     } catch (error) {
-        res.status(500).json(error);
+        sendServerError(res, error);
     }
 };
 
@@ -81,11 +82,37 @@ const updateProduct = async (req, res) => {
 
         const { id } = req.params;
 
+        const {
+            name,
+            barcode,
+            description,
+            quantity,
+            category,
+            expirationDate,
+            imageUrl
+        } = req.body;
+
+        // Só os campos editáveis: id e datas de controle não podem ser alterados
+        const data = {
+            name,
+            barcode,
+            description,
+            quantity,
+            category,
+            imageUrl
+        };
+
+        if (expirationDate !== undefined) {
+            data.expirationDate = expirationDate
+                ? new Date(expirationDate)
+                : null;
+        }
+
         const product = await prisma.product.update({
             where: {
                 id: Number(id)
             },
-            data: req.body
+            data
         });
 
         res.json(product);
@@ -104,7 +131,7 @@ const updateProduct = async (req, res) => {
             });
         }
 
-        res.status(500).json(error);
+        sendServerError(res, error);
     }
 };
 
@@ -113,11 +140,19 @@ const deleteProduct = async (req, res) => {
 
         const { id } = req.params;
 
-        await prisma.product.delete({
-            where: {
-                id: Number(id)
-            }
-        });
+        // Remove junto as associações com fornecedores
+        await prisma.$transaction([
+            prisma.productSupplier.deleteMany({
+                where: {
+                    productId: Number(id)
+                }
+            }),
+            prisma.product.delete({
+                where: {
+                    id: Number(id)
+                }
+            })
+        ]);
 
         res.json({
             message: "Produto removido com sucesso"
@@ -131,7 +166,7 @@ const deleteProduct = async (req, res) => {
             });
         }
 
-        res.status(500).json(error);
+        sendServerError(res, error);
     }
 };
 
