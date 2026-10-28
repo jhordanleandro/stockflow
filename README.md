@@ -73,7 +73,7 @@ npx prisma generate
 npm run dev
 ```
 
-A API sobe em `http://localhost:3000`.
+A API sobe em `http://localhost:3000`. Para usar outra porta, defina a variável `PORT`: `PORT=4000 npm run dev`.
 
 ## Endpoints
 
