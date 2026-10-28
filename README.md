@@ -2,6 +2,7 @@
 
 API REST para gestão de estoque e fornecedores, desenvolvida no Projeto Integrador Full Stack.
 
+[![Testes](https://github.com/jhordanleandro/stockflow/actions/workflows/tests.yml/badge.svg)](https://github.com/jhordanleandro/stockflow/actions/workflows/tests.yml)
 ![Node.js](https://img.shields.io/badge/Node.js-18.18+-5FA04E?style=flat-square&logo=nodedotjs&logoColor=white)
 ![Express](https://img.shields.io/badge/Express-5-000000?style=flat-square&logo=express&logoColor=white)
 ![Prisma](https://img.shields.io/badge/Prisma-6-2D3748?style=flat-square&logo=prisma&logoColor=white)
@@ -13,7 +14,7 @@ API REST para gestão de estoque e fornecedores, desenvolvida no Projeto Integra
 - **Produtos:** cadastro, consulta, atualização e remoção, com código de barras único, categoria, quantidade em estoque, validade e imagem.
 - **Fornecedores:** cadastro, consulta, atualização e remoção, com CNPJ único.
 - **Produtos × fornecedores:** um produto pode ter vários fornecedores e um fornecedor pode atender vários produtos. A API lista os fornecedores de cada produto e os produtos de cada fornecedor.
-- **Erros claros:** mensagens em português, com `400` para dados duplicados ou inválidos e `404` para registros inexistentes.
+- **Erros claros:** mensagens em português, com `400` para dados duplicados ou inválidos e `404` para registros inexistentes. Erros inesperados respondem `500` sem expor detalhes internos.
 
 ## Modelo de dados
 
@@ -97,6 +98,9 @@ A API sobe em `http://localhost:3000`. Para usar outra porta, defina a variável
 
 As rotas de `/product-suppliers` recebem `productId` e `supplierId` no corpo da requisição.
 
+- O `PUT` altera só os campos de cadastro; `id`, `createdAt` e `updatedAt` são ignorados.
+- Excluir um produto ou fornecedor remove também as associações dele.
+
 ### Exemplo
 
 ```bash
@@ -104,6 +108,15 @@ curl -X POST http://localhost:3000/products \
   -H "Content-Type: application/json" \
   -d '{"name":"Teclado USB","barcode":"7890000000001","description":"Teclado ABNT2","quantity":10,"category":"Periféricos"}'
 ```
+
+## Testes
+
+```bash
+cd backend
+npm test
+```
+
+Os testes sobem a API com um banco SQLite temporário (o `dev.db` não é tocado) e rodam a cada push pelo GitHub Actions, em Node 18 e 22.
 
 ## Licença
 
