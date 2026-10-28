@@ -1,0 +1,26 @@
+# Atualizações automáticas: uma vez por mês, com as versões menores agrupadas num só PR.
+# Versões maiores (ex.: Prisma 7) chegam em PRs separados, porque podem exigir mudanças no código.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /backend
+    schedule:
+      interval: monthly
+    groups:
+      dependencias:
+        patterns: ["*"]
+        update-types: [minor, patch]
+    commit-message:
+      prefix: chore
+      include: scope
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      actions:
+        patterns: ["*"]
+    commit-message:
+      prefix: ci
+      include: scope
